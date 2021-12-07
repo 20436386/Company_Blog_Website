@@ -1,0 +1,22 @@
+{% extends 'my_app/my_app_base.html' %}
+
+{% block body_block %}
+
+    <h1>Enter your login details</h1>
+        {# NB: Must have method and not action here #}
+        <form method="POST"> 
+        {% csrf_token %}
+        <p>
+            <label for="user_name">User Name:</label>
+            <input type="text" name="user_name" id="user_name">
+        </p>
+
+        <p>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password">
+        </p>
+
+        <input type="submit" value="Login">
+        </form>
+
+{% endblock body_block %}

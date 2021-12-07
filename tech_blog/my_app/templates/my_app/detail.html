@@ -1,0 +1,51 @@
+{% extends 'my_app/my_app_base.html' %}
+
+{% block body_block %}
+    <h1> {{blog.title}} </h1>
+        <p> Author: {{blog.user}} </p>
+        <p> {{blog.content}} </p>
+        <p> State: {{blog.state}} </p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'my_app:update' pk=blog.pk%}"><input type="button" value="Edit"></a>
+            <a href="{% url 'my_app:delete' pk=blog.pk %}"><input type="button" value="Delete"></a>
+            {% if not blog.state %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" name="submit_publish" value="Publish">
+                </form>
+            {% endif %}
+        {% endif %}
+
+        <h2> Add Comment: </h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="author">Author</label>
+            <input type="text" name="author" id="author">
+            <label for="comment_text">Comment</label>
+            <input type="text" name="comment_text" id="comment_text">
+            <input type="submit" name="submit_comment" value="Comment">
+        </form>
+
+        {% if user.is_authenticated %}
+
+                <ol>
+                    {% for comment in blog.comments.all %}
+                        {% if  %}
+                            <li>
+                                <p>{{comment.content}}</p>
+                                <p>Author: {{comment.author}}</p>
+                                <p>State: {{comment.status}}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+        
+        {% else %}
+
+        {% endif %}
+
+
+
+
+{% endblock body_block %}

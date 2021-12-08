@@ -1,0 +1,4 @@
+superusers:
+1) Phoenix
+2) username = user_1, password = password123
+

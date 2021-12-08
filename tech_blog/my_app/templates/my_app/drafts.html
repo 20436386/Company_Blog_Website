@@ -5,15 +5,19 @@
 
 {% for blog in blog_list %}
 <ul>
-    {% if blog.state == False %}
-    <li>
-            {% comment %} Link should take you to upgrade page {% endcomment %}
-            <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
-            <p>Author: {{blog.user}}</p>
-            <p>State: {{blog.state}}</p>
-    </li>
+    {% if blog.user == user %}
+        {% if blog.state == False %}
+        <li>
+                {% comment %} Link should take you to upgrade page {% endcomment %}
+                <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
+                <p>Author: {{blog.user}}</p>
+                <p>State: {{blog.state}}</p>
+        </li>
+        {% endif %}
     {% endif %}
 </ul>
 {% endfor %}
 
 {% endblock body_block %}
+
+{% comment %} (blog.user == current_user) and {% endcomment %}

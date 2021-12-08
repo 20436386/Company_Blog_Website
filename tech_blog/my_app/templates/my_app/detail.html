@@ -5,47 +5,67 @@
         <p> Author: {{blog.user}} </p>
         <p> {{blog.content}} </p>
         <p> State: {{blog.state}} </p>
+        <p> current_user: {{user}} </p>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'my_app:update' pk=blog.pk%}"><input type="button" value="Edit"></a>
-            <a href="{% url 'my_app:delete' pk=blog.pk %}"><input type="button" value="Delete"></a>
-            {% if not blog.state %}
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="submit" name="submit_publish" value="Publish">
-                </form>
+            {% if blog.user == user %}
+                <a href="{% url 'my_app:update' pk=blog.pk%}"><input type="button" value="Edit"></a>
+                <a href="{% url 'my_app:delete' pk=blog.pk %}"><input type="button" value="Delete"></a>
+                {% if not blog.state %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="submit" name="submit_publish" value="Publish">
+                    </form>
+                {% endif %}
             {% endif %}
         {% endif %}
 
-        <h2> Add Comment: </h2>
-        <form method="post">
-            {% csrf_token %}
-            <label for="author">Author</label>
-            <input type="text" name="author" id="author">
-            <label for="comment_text">Comment</label>
-            <input type="text" name="comment_text" id="comment_text">
-            <input type="submit" name="submit_comment" value="Comment">
-        </form>
+        {% if blog.state == True %}
 
-        {% if user.is_authenticated %}
+            <h2> Add Comment: </h2>
+            <form method="post">
+                {% csrf_token %}
+                <label for="author">Author</label>
+                <input type="text" name="author" id="author">
+                <label for="comment_text">Comment</label>
+                <input type="text" name="comment_text" id="comment_text">
+                <input type="submit" name="submit_comment" value="Comment">
+            </form>
 
-                <ol>
-                    {% for comment in blog.comments.all %}
-                        {% if  %}
+        
+
+            <ul>
+                {% for comment in blog.comments.all %}
+                    {% if user.is_authenticated %}
+                        {% if blog.user == user %}
+                            {% if  comment.status == False%}
+                                <li>
+                                    <p>{{comment.content}}</p>
+                                    <p>Author: {{comment.author}}</p>
+                                    <p>State: {{comment.status}}</p>
+                                    {% comment %} Put in buttons here {% endcomment %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" name="$a{{comment.pk}}" value="Approve">
+                                        <input type="submit" name="$r{{comment.pk}}" value="Reject">
+                                    </form>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% for comment in blog.comments.all %}
+                        {% if  comment.status == True%}
                             <li>
                                 <p>{{comment.content}}</p>
                                 <p>Author: {{comment.author}}</p>
                                 <p>State: {{comment.status}}</p>
                             </li>
                         {% endif %}
-                    {% endfor %}
-                </ol>
-        
-        {% else %}
-
+                {% endfor %}
+            </ul>
         {% endif %}
-
-
-
+        
 
 {% endblock body_block %}

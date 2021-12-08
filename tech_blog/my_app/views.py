@@ -17,9 +17,22 @@ class PublishedBlogListView(ListView):
     model = Blog
     template_name = 'my_app/index.html'
 
+    # def get_context_data(self, **kwargs):
+    #     self.object = self.get_object()
+    #     approved_count = self.object.comments
+    #     return context
+
 class DraftBlogListView(ListView):
     model = Blog
     template_name = 'my_app/drafts.html'
+
+    #Dont need to pass user object in with context dictionary. user object is already available in template as 'user'
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     user = self.request.user
+    #     #Can pass objects into templates!!!
+    #     context['current_user'] = user
+    #     return context
 
 
 class BlogCreateView(LoginRequiredMixin ,CreateView):
@@ -47,12 +60,14 @@ class BlogDetailView(DetailView):
     #https://docs.djangoproject.com/en/3.2/ref/class-based-views/mixins-single-object/#django.views.generic.detail.SingleObjectMixin
 
     def post(self, *args, **kwargs):
+        print("post method called")
         if self.request.POST.get("submit_publish"):
             print("Publish button pressed")
             self.object = self.get_object()
             self.object.state = True
             self.object.save(update_fields=('state', ))
             return HttpResponseRedirect(reverse('my_app:index'))
+
         elif self.request.POST.get("submit_comment"):
             #Create and save new comment object to database:
             print("comment button pressed")
@@ -66,7 +81,52 @@ class BlogDetailView(DetailView):
             if created:
                 print("comment created")
             comment_object.save()
-            return HttpResponseRedirect(reverse('my_app:detail'))
+            return HttpResponseRedirect(reverse('my_app:detail', args=(blog.pk,)))
+
+        # elif self.request.POST.get("approve_comment"):
+        #     #change comment status to True
+        #     print("\nApprove button pressed\n")
+        #     self.object = self.get_object()
+        #     print(self.object.pk)
+            
+        #     for x in self.object.comments.all():
+        #         print(x.pk)
+        #     return HttpResponseRedirect(reverse('my_app:detail', args=(self.object.pk,)))
+
+        # elif self.request.POST.get("reject_comment"):
+        #     #Delete comment:
+        #     print("\nReject button pressed\n")
+        #     self.object = self.get_object()
+        #     return HttpResponseRedirect(reverse('my_app:detail', args=(self.object.pk,)))
+        
+        else:
+            print('else executed')
+            #https://docs.djangoproject.com/en/3.2/ref/models/querysets/#update
+            self.object = self.get_object()
+            print(self.object)
+            print(self.request.POST)
+
+            for val in self.request.POST:
+                if val[0] == '$':
+                    print("doller sign found")
+                    comment_pk = val[2:]
+                    print("comment_pk =", comment_pk)
+                    comment_cmd = val[1]
+
+            comment_queryset = self.object.comments.filter(pk=comment_pk)
+            print(self.object.comments.filter(pk=comment_pk))
+
+            if comment_cmd == 'a':
+                print("command is approve")
+                #change state of comment
+                comment_queryset.update(status=True)
+
+            elif comment_cmd =='r':
+                print("command is reject")
+                comment_queryset.delete()
+            
+            return HttpResponseRedirect(reverse('my_app:detail', args=(self.object.pk,)))
+                    
 
     # This is for injecting data
     # def get_context_data(self, **kwargs):

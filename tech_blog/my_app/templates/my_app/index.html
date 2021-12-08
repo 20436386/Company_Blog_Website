@@ -1,4 +1,6 @@
 {% extends 'my_app/my_app_base.html' %}
+{% comment %} NB: Must load custom filter from html file you use them, wont work if they are in the base file!!!! {% endcomment %}
+{% load comment_count %}
 
 {% block body_block %}
 <h1>List of all posted blogs</h1>
@@ -10,7 +12,8 @@
             <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
             <p>Author: {{blog.user}}</p>
             <p>State: {{blog.state}}</p>
-            <p>Comments: {{blog.comments.all.count}}</a></p>
+            {% comment %} Only show approved comments {% endcomment %}
+            <p>Comments: {{blog.comments.all|comment_count}}</a></p>
             {% comment %} <p><a href="{% url 'my_app:comment_list' %}">Comments: {{blog.comments.all.count}}</a></p> {% endcomment %}
             {% comment %} {% for comment in blog.comments.all %}
                 <p>{{comment.content}}</p>

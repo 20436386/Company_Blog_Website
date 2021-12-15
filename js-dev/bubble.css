@@ -1,0 +1,22 @@
+#textSelectionTooltipContainer {
+  will-change: transform;
+  position: absolute;
+  width: 200px;
+  height: 35px;
+  background: white;
+  /* border-radius: 6px; */
+  top: 0px;
+  left: 0px;
+  display: flex;
+  /* padding: 5px 10px; */
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+#textSelectionTooltipContainer button {
+  font-size: 14px;
+  border: 1px solid black;
+  background: none;
+  cursor: pointer;
+  /* margin: 0 2px; */
+}

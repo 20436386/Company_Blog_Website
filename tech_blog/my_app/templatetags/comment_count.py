@@ -5,7 +5,7 @@ register = template.Library()
 @register.filter()
 def comment_count(value):
     '''
-    Template filter to fetch all values from a list that correspond to the value arg
+    Template filter that returns sum of approved comments
     '''
 
     print(value)

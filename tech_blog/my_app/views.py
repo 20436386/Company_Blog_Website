@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 #This ensures that user is logged in in order to create new database entry
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.utils import timezone, dateformat
+from datetime import datetime
 
 # Create your views here.
 
@@ -65,7 +67,11 @@ class BlogDetailView(DetailView):
             print("Publish button pressed")
             self.object = self.get_object()
             self.object.state = True
-            self.object.save(update_fields=('state', ))
+            print(self.object.publish_date)
+            # self.object.publish_date = dateformat.format(timezone.now(), "M. d, Y, h:i a")
+            self.object.publish_date = timezone.now()
+            print(self.object.publish_date)
+            self.object.save(update_fields=('state', 'publish_date',))
             return HttpResponseRedirect(reverse('my_app:index'))
 
         elif self.request.POST.get("submit_comment"):

@@ -18,10 +18,12 @@
                 <a href="{% url 'my_app:update' pk=blog.pk%}"><input type="button" value="Edit"></a>
                 <a href="{% url 'my_app:delete' pk=blog.pk %}"><input type="button" value="Delete"></a>
                 {% if not blog.state %}
-                    <form method="post">
+                    {% comment %} <form method="post">
                         {% csrf_token %}
                         <input type="submit" name="submit_publish" value="Publish">
-                    </form>
+                    </form> {% endcomment %}
+                    {% csrf_token %}
+                    <a href="{% url 'my_app:blog_publish' pk=blog.pk%}"><button>Publish</button></a>
                 {% endif %}
             {% endif %}
         {% endif %}
@@ -29,9 +31,12 @@
         {% if blog.state == True %}
 
             <h2> Add Comment: </h2>
+            {% comment %} <form method="post" action="/comment/create"> {% endcomment %}
             <form method="post">
                 {% csrf_token %}
-                <p>
+                {{comment_form.as_p}}
+                <input type="submit" value="Submit">
+                {% comment %} <p>
                 <label for="author">Author</label>
                 <input type="text" name="author" id="author">
                 </p>
@@ -41,7 +46,7 @@
                 </p>
                 <p>
                 <input type="submit" name="submit_comment" value="Comment">
-                </p>
+                </p> {% endcomment %}
             </form>
 
         
@@ -58,11 +63,17 @@
                                     <p>Author: {{comment.author}}</p>
                                     <p>State: {{comment.status}}</p>
                                     {% comment %} Put in buttons here {% endcomment %}
+                                    <a href="{% url 'my_app:comment_approve' pk=comment.pk%}"><button>Approve</button></a>
+                                    <a href="{% url 'my_app:comment_reject' pk=comment.pk%}"><button>Reject</button></a>
+                                    
+                                    <!--
                                     <form method="post">
                                         {% csrf_token %}
                                         <input type="submit" name="$a{{comment.pk}}" value="Approve">
                                         <input type="submit" name="$r{{comment.pk}}" value="Reject">
                                     </form>
+                                    -->
+
                                 </li>
                             {% endif %}
                         {% endif %}

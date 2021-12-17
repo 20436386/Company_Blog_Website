@@ -7,21 +7,21 @@
 <h1>List of all posted blogs</h1>
 
 {% for blog in blog_list %}
-<ul>
-    {% if blog.state == True %}
-    <li>
-            <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
-            <p>Author: {{blog.user}}</p>
-            <p>State: {{blog.state}}</p>
-            {% comment %} Only show approved comments {% endcomment %}
-            <p>Comments: {{blog.comments.all|comment_count}}</a></p>
-            {% comment %} <p><a href="{% url 'my_app:comment_list' %}">Comments: {{blog.comments.all.count}}</a></p> {% endcomment %}
-            {% comment %} {% for comment in blog.comments.all %}
-                <p>{{comment.content}}</p>
-            {% endfor %} {% endcomment %}
-    </li>
-    {% endif %}
-</ul>
+    <ul>
+        {% comment %} {% if blog.state == False %} {% endcomment %}
+        {% comment %} Line redudant as get_queryset() call overidden in views to include a filter to filter out ojects with false state {% endcomment %}
+        <li>
+                <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
+                <p>Author: {{blog.user}}</p>
+                <p>State: {{blog.state}}</p>
+                {% comment %} Only show approved comments {% endcomment %}
+                <p>Comments: {{blog.comments.all|comment_count}}</a></p>
+                {% comment %} <p><a href="{% url 'my_app:comment_list' %}">Comments: {{blog.comments.all.count}}</a></p> {% endcomment %}
+                {% comment %} {% for comment in blog.comments.all %}
+                    <p>{{comment.content}}</p>
+                {% endfor %} {% endcomment %}
+        </li>
+    </ul>
 {% endfor %}
 
 

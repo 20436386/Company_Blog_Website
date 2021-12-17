@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import fields
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import (TemplateView, ListView, DeleteView, CreateView, DetailView, UpdateView)
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Blog, Comment
@@ -24,9 +24,28 @@ class PublishedBlogListView(ListView):
     #     approved_count = self.object.comments
     #     return context
 
-class DraftBlogListView(ListView):
+    def get_queryset(self):
+        return Blog.objects.filter(state__exact=True)
+
+class DraftBlogListView(LoginRequiredMixin, ListView):
+    # This should be done whenever LoginRequiredMixin is inherited. login_url is url to display if user is not 
+    # logged in, redirect_field is url to display after they login
+    # NB: must have LoginRequiredMixin before Listview
+    login_url = '/login/'
+    #This does not work
+    redirect_field_name = 'my_app/drafts.html'
+    
     model = Blog
     template_name = 'my_app/drafts.html'
+
+    # This function overides the original. It has been modified to filter out all objects with state equal to False before ListView displays all.
+    # https://docs.djangoproject.com/en/3.2/ref/class-based-views/
+    # https://docs.djangoproject.com/en/3.2/ref/class-based-views/generic-display/#listview
+    # https://docs.djangoproject.com/en/3.2/ref/models/querysets/#field-lookups  search field lookups
+    # https://docs.djangoproject.com/en/3.2/topics/db/queries/#field-lookups
+
+    def get_queryset(self):
+        return Blog.objects.filter(state__exact=False)
 
     #Dont need to pass user object in with context dictionary. user object is already available in template as 'user'
     # def get_context_data(self, **kwargs):
@@ -38,6 +57,9 @@ class DraftBlogListView(ListView):
 
 
 class BlogCreateView(LoginRequiredMixin ,CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'my_app/new_post.html'
+
     #I believe the default success_url is the blog details page 
     model = Blog
     fields = ['title', 'content']
@@ -140,14 +162,20 @@ class BlogDetailView(DetailView):
     #     context['now'] = timezone.now()
     #     return context
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'my_app/new_post.html'
+
     model = Blog
     fields = ['title', 'content']
     template_name = 'my_app/new_post.html'
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+
     model = Blog
     # template_name = 'my_app/blog_confirm_delete.html'
+    #Reverse_lazy will ensure that blog object is deleted before url redirect occurs
     success_url = reverse_lazy('my_app:index')
 
 # class CommentCreateView(CreateView):

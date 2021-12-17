@@ -4,16 +4,17 @@
 <h1>All your unpublished blogs:</h1>
 
 {% for blog in blog_list %}
+
 <ul>
     {% if blog.user == user %}
-        {% if blog.state == False %}
+        {% comment %} {% if blog.state == False %} {% endcomment %}
+        {% comment %} Line redudant as get_queryset() call overidden in views to include a filter to filter out ojects with false state{% endcomment %}
         <li>
-                {% comment %} Link should take you to upgrade page {% endcomment %}
+                {% comment %} Link should take you to update page {% endcomment %}
                 <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
                 <p>Author: {{blog.user}}</p>
                 <p>State: {{blog.state}}</p>
         </li>
-        {% endif %}
     {% endif %}
 </ul>
 {% endfor %}

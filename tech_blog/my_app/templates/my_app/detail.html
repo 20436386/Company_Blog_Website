@@ -3,10 +3,12 @@
 {% block body_block %}
     <h1> {{blog.title}} </h1>
         {% if blog.state == True %}
-        <p> {{blog.publish_date}} </p>
+        {% comment %} https://docs.djangoproject.com/en/4.0/ref/templates/builtins/#date {% endcomment %}
+        <p>{{blog.publish_date|date:"M, d, Y, "}}{{blog.publish_date|time:"h:i a"}}</p>
         {% endif %}
         <p> Author: {{blog.user}} </p>
         {% comment %} The autoescape ensures that templatetag content is rendered as html {% endcomment %}
+        {% comment %} Can also use {{blog.content|safe|linebreaksbr}} {% endcomment %}
         {% autoescape off %}
             {{blog.content}}
         {% endautoescape %} 
@@ -56,11 +58,12 @@
                     {% if user.is_authenticated %}
                         {% if blog.user == user %}
                             {% if  comment.status == False%}
-                                <li>
+                                <br>
                                     {% autoescape off %}
                                         {{comment.content}}
                                     {% endautoescape %} 
                                     <p>Author: {{comment.author}}</p>
+                                    <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
                                     <p>State: {{comment.status}}</p>
                                     {% comment %} Put in buttons here {% endcomment %}
                                     <a href="{% url 'my_app:comment_approve' pk=comment.pk%}"><button>Approve</button></a>
@@ -73,8 +76,6 @@
                                         <input type="submit" name="$r{{comment.pk}}" value="Reject">
                                     </form>
                                     -->
-
-                                </li>
                             {% endif %}
                         {% endif %}
                     {% endif %}
@@ -82,20 +83,20 @@
 
                 {% for comment in blog.comments.all %}
                         {% if  comment.status == True%}
-                            <li>
+                            <br>
                                 {% autoescape off %}
                                     {{comment.content}}
                                 {% endautoescape %} 
                                 <p>Author: {{comment.author}}</p>
+                                <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
                                 <p>State: {{comment.status}}</p>
-                            </li>
                         {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
 
     <script>
-        var comment = document.querySelector("#comment_text")
+        var comment = document.querySelector("#id_content")
         var editor = new MediumEditor(comment);
     </script>
         

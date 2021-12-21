@@ -2,6 +2,10 @@
 
 {% block body_block %}
 
+    {% comment %} {% if form.errors %}
+        <p>Your username or password were incorrect, please try agan.</p>
+    {% endif %}
+
     <h1>Enter your login details</h1>
         {# NB: Must have method and not action here #}
         <form method="POST"> 
@@ -17,6 +21,41 @@
         </p>
 
         <input type="submit" value="Login">
+        </form> {% endcomment %}
+
+        {% comment %} Straight from django: https://docs.djangoproject.com/en/4.0/topics/auth/default/#module-django.contrib.auth.views {% endcomment %}
+        {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+        {% endif %}
+        
+        {% if next %}
+            {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+            {% else %}
+            <p>Please login to see this page.</p>
+            {% endif %}
+        {% endif %}
+        
+        <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <table>
+        <tr>
+            <td>{{ form.username.label_tag }}</td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+        </tr>
+        </table>
+        
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
         </form>
+        
+        {# Assumes you set up the password_reset view in your URLconf #}
+        {% comment %} <p><a href="{% url 'password_reset' %}">Lost password?</a></p> {% endcomment %}
+        
 
 {% endblock body_block %}

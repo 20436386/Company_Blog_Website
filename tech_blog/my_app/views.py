@@ -12,9 +12,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.utils import timezone, dateformat
 from datetime import datetime
-from .forms import CommentForm
+from .forms import CommentForm, BlogForm
 
 # Create your views here.
+
+class AboutView(TemplateView):
+    template_name = 'my_app/about.html'
 
 class PublishedBlogListView(ListView):
     model = Blog
@@ -62,8 +65,10 @@ class BlogCreateView(LoginRequiredMixin ,CreateView):
     redirect_field_name = 'my_app/new_post.html'
 
     #I believe the default success_url is the blog details page 
+    # fields = ['title', 'content']
+    # https://docs.djangoproject.com/en/3.2/ref/class-based-views/mixins-editing/#django.views.generic.edit.FormMixin
+    form_class = BlogForm
     model = Blog
-    fields = ['title', 'content']
     template_name = 'my_app/new_post.html'
     # success_url = "my_app/"
 
@@ -87,22 +92,26 @@ class BlogDetailView(DetailView):
 
     def post(self, *args, **kwargs):
         # print(self.request.POST)
-        form_data = CommentForm(self.request.POST)
-        print(form_data)
-        comment_author = form_data.cleaned_data["author"]
-        comment_text = form_data.cleaned_data["content"]
-        blog = self.get_object()
+        form = CommentForm(self.request.POST)
+        print(form)
+        if form.is_valid():
+            # comment_author = form.cleaned_data["author"]
+            # comment_text = form.cleaned_data["content"]
+            comment = form.save(commit=False)
+            comment.blog = self.get_object()
+            comment.create_date = timezone.now()
+            comment.status = False
+            print("create date:", comment.create_date)
+            # blog = self.get_object()
+            comment.save()
 
-        comment_object, created = Comment.objects.get_or_create(author=comment_author, content=comment_text, status=False, blog=blog)
-        if created:
-            print("comment created")
-        else:
-            print("Comment already exists")
-        comment_object.save()
-        return HttpResponseRedirect(reverse('my_app:detail', args=(blog.pk,)))
-
-
-
+            # comment_object, created = Comment.objects.get_or_create(author=comment_author, content=comment_text, status=False, blog=blog, create_date=create_date)
+            # if created:
+            #     print("comment created")
+            # else:
+            #     print("Comment already exists")
+            # comment_object.save()
+        return HttpResponseRedirect(reverse('my_app:detail', args=(comment.blog.pk,)))
 
     #I believe this function is called when http POST request occurs, it then gets the object this view is operating on and updates it 
     #https://docs.djangoproject.com/en/3.2/ref/class-based-views/base/#view
@@ -170,8 +179,8 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     redirect_field_name = 'my_app/new_post.html'
 
+    form_class = BlogForm
     model = Blog
-    fields = ['title', 'content']
     template_name = 'my_app/new_post.html'
 
 class BlogDeleteView(LoginRequiredMixin, DeleteView):
@@ -188,39 +197,39 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
 #     template_name = 'my_app/detail.html'
     
 
-def user_login(request):
+# def user_login(request):
     
-    #If user has sent data to server
-    if request.method == 'POST':
-        print("user has posted")
-        #Get info from form
-        user_name = request.POST["user_name"]
-        password = request.POST["password"]
+#     #If user has sent data to server
+#     if request.method == 'POST':
+#         print("user has posted")
+#         #Get info from form
+#         user_name = request.POST["user_name"]
+#         password = request.POST["password"]
 
-        #Authenticate user
-        user = authenticate(username=user_name, password=password)
+#         #Authenticate user
+#         user = authenticate(username=user_name, password=password)
 
-        if user != None:
-            print("Logging in user")
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse('my_app:index'))
-            else:
-                return HttpResponse("User not active")
-        else:
-            #Should keep on login page and use template tagging to say credentials not valid
-            print("Error in credentials")
-            return HttpResponse("Error in credentials")
+#         if user != None:
+#             print("Logging in user")
+#             if user.is_active:
+#                 login(request, user)
+#                 return HttpResponseRedirect(reverse('my_app:index'))
+#             else:
+#                 return HttpResponse("User not active")
+#         else:
+#             #Should keep on login page and use template tagging to say credentials not valid
+#             print("Error in credentials")
+#             return HttpResponse("Error in credentials")
 
-    # else:
-        # user_form =UserForm()
+#     # else:
+#         # user_form =UserForm()
 
-    return render(request, 'my_app/login.html')
+#     return render(request, 'my_app/login.html')
 
-@login_required
-def user_logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('my_app:index'))
+# @login_required
+# def user_logout(request):
+#     logout(request)
+#     return HttpResponseRedirect(reverse('my_app:index'))
 
 # Blog handlers
 def blog_publish(request, pk):

@@ -24,11 +24,11 @@ class Blog(models.Model):
         return reverse("my_app:detail", kwargs={"pk": self.pk})
     
 class Comment(models.Model):
-    author = models.TextField(max_length=256) #Change to charfield
+    author = models.CharField(max_length=256) #Change to charfield
     blog = models.ForeignKey(Blog, related_name='comments' , on_delete=models.CASCADE)
     content = models.TextField(max_length=512)
     status = models.BooleanField(default = False)
-    # Add in create date for comment here
+    create_date = models.DateTimeField(null=True, default=None)
 
     def approve(self):
         self.status = True

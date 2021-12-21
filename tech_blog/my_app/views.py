@@ -37,7 +37,7 @@ class DraftBlogListView(LoginRequiredMixin, ListView):
     # NB: must have LoginRequiredMixin before Listview
     login_url = '/login/'
     #This does not work
-    redirect_field_name = 'my_app/drafts.html'
+    # redirect_field_name = 'my_app/drafts.html'
     
     model = Blog
     template_name = 'my_app/drafts.html'
@@ -62,7 +62,7 @@ class DraftBlogListView(LoginRequiredMixin, ListView):
 
 class BlogCreateView(LoginRequiredMixin ,CreateView):
     login_url = '/login/'
-    redirect_field_name = 'my_app/new_post.html'
+    # redirect_field_name = 'my_app/new_post.html'
 
     #I believe the default success_url is the blog details page 
     # fields = ['title', 'content']
@@ -182,7 +182,7 @@ class BlogDetailView(DetailView):
 
 class BlogUpdateView(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
-    redirect_field_name = 'my_app/new_post.html'
+    # redirect_field_name = 'my_app/new_post.html'
 
     form_class = BlogForm
     model = Blog

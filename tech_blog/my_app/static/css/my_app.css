@@ -1,4 +1,83 @@
-.centerstage{
-    margin-left: auto;
-    margin-right: auto;
+h1{
+    font-family: 'Luxurious Roman', cursive;
+    text-align: center;
 }
+
+.blog_content{
+    font-family: 'Montserrat', sans-serif;
+}
+
+.delete_form{
+    text-align: center;
+}
+.login_form{
+    text-align: center;
+    padding-top: 2em;
+}
+
+.big_brand{
+    font-family: 'Lobster', cursive;
+    font-size: 2em;
+}
+
+.luxury_font{
+    font-family: 'Luxurious Roman', cursive;
+}
+
+.tight_spacing{
+    line-height: 0.8em;
+}
+
+.new_comment{
+    background-color: rgba(128, 128, 128, 0.3);
+    padding: 1em;
+    border-radius: 1em;
+}
+
+.approved_comments{
+    background-color: rgba(128, 128, 128, 0.3);
+    padding: 1em;
+    border-radius: 1em;
+}
+
+.publish_date{
+    text-align: center;
+}
+
+/*COLOR CHANGER*/
+/*Credit and Source: http://codepen.io/thapliyalshivam/pen/dvgXVO*/
+.loader{
+    filter:hue-rotate(0deg);
+    color: linear-gradient(45deg,#0f8,#08f);
+    animation:hue 5000ms infinite linear;
+  }
+  
+  @keyframes spinify {
+    0% {
+      transform: translate(0px,0px);
+  
+    }
+    33% {
+      transform: translate(0px,24px);
+      border-radius:100%;
+      width:10px;
+      height:10px;
+  
+    }
+     66% {
+      transform:translate(0px,-16px);
+    }
+  
+     88% {
+      transform:translate(0px,4px);
+  
+    }
+    100% {
+      transform:translate(0px,0px);
+    }
+  }
+  @keyframes hue{
+    0%{filter: hue-rotate(0deg);}
+    100%{filter:hue-rotate(360deg);}
+  
+  }

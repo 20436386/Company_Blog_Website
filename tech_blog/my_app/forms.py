@@ -13,7 +13,7 @@ class BlogForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'textinputclass'})
-        self.fields['content'].widget.attrs.update({'class': 'editable medium-editor-textarea postcontent'})
+        self.fields['content'].widget.attrs.update({'class': 'editable medium-editor-textarea blog_content'})
 
     # # From udemy:
     # widgets = {

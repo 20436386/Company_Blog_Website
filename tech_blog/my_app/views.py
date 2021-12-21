@@ -79,6 +79,11 @@ class BlogCreateView(LoginRequiredMixin ,CreateView):
         # print(self.request.user)
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_blog'] = True
+        return context
+
 class BlogDetailView(DetailView):
     model = Blog
     context_object_name = 'blog'
@@ -183,6 +188,11 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     template_name = 'my_app/new_post.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_blog'] = False
+        return context
+
 class BlogDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
 
@@ -266,4 +276,3 @@ def comment_reject(request, pk):
     blog_pk = comment.blog.pk
     comment.delete()
     return HttpResponseRedirect(reverse('my_app:detail', args=(blog_pk,)))
-

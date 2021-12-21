@@ -1,74 +1,85 @@
 {% extends 'my_app/my_app_base.html' %}
 
 {% block body_block %}
-    <h1> {{blog.title}} </h1>
+<div class="row justify-content-center">
+    <div class="col-10">
+        <h1> {{blog.title}} </h1>
         {% if blog.state == True %}
         {% comment %} https://docs.djangoproject.com/en/4.0/ref/templates/builtins/#date {% endcomment %}
-        <p>{{blog.publish_date|date:"M, d, Y, "}}{{blog.publish_date|time:"h:i a"}}</p>
+        <p class="publish_date">{{blog.publish_date|date:"M, d, Y, "}}{{blog.publish_date|time:"h:i a"}}</p>
         {% endif %}
-        <p> Author: {{blog.user}} </p>
+        <p style="text-align: center;"> Author: {{blog.user}} </p>
         {% comment %} The autoescape ensures that templatetag content is rendered as html {% endcomment %}
         {% comment %} Can also use {{blog.content|safe|linebreaksbr}} {% endcomment %}
         {% autoescape off %}
             {{blog.content}}
         {% endautoescape %} 
-        <p> State: {{blog.state}} </p>
+        {% comment %} <p> State: {{blog.state}} </p> {% endcomment %}
         <p> current_user: {{user}} </p>
 
         {% if user.is_authenticated %}
             {% if blog.user == user %}
-                <a href="{% url 'my_app:update' pk=blog.pk%}"><input type="button" value="Edit"></a>
-                <a href="{% url 'my_app:delete' pk=blog.pk %}"><input type="button" value="Delete"></a>
+                <a class="btn btn-primary" href="{% url 'my_app:update' pk=blog.pk%}"><i class="bi bi-pencil"></i></a>
+                <a class="btn btn-primary" href="{% url 'my_app:delete' pk=blog.pk %}"><i class="bi bi-trash"></i></a>
+                <br>
+                <br>
                 {% if not blog.state %}
                     {% comment %} <form method="post">
                         {% csrf_token %}
                         <input type="submit" name="submit_publish" value="Publish">
-                    </form> {% endcomment %}
-                    {% csrf_token %}
-                    <a href="{% url 'my_app:blog_publish' pk=blog.pk%}"><button>Publish</button></a>
-                {% endif %}
+                    </form> 
+                    {% csrf_token %}{% endcomment %}
+                    <div style="text-align:center;">
+                    <a class="btn btn-primary" href="{% url 'my_app:delete' pk=blog.pk %}" href="{% url 'my_app:blog_publish' pk=blog.pk%}">Publish</a>
+                    </div>
+                    {% endif %}
             {% endif %}
         {% endif %}
-
+        <br>
+        <br>
         {% if blog.state == True %}
 
-            <h2> Add Comment: </h2>
-            {% comment %} <form method="post" action="/comment/create"> {% endcomment %}
-            <form method="post">
-                {% csrf_token %}
-                {{comment_form.as_p}}
-                <input type="submit" value="Submit">
-                {% comment %} <p>
-                <label for="author">Author</label>
-                <input type="text" name="author" id="author">
-                </p>
-                <p>
-                <label for="comment_text">Comment</label>
-                <textarea name="comment_text" id="comment_text" cols="30" rows="10"></textarea>
-                </p>
-                <p>
-                <input type="submit" name="submit_comment" value="Comment">
-                </p> {% endcomment %}
-            </form>
+            <div class="new_comment">
+                <h4 class="luxury_font">Add Comment:</h4>
+                {% comment %} <form method="post" action="/comment/create"> {% endcomment %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{comment_form.as_p}}
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                    {% comment %} <p>
+                    <label for="author">Author</label>
+                    <input type="text" name="author" id="author">
+                    </p>
+                    <p>
+                    <label for="comment_text">Comment</label>
+                    <textarea name="comment_text" id="comment_text" cols="30" rows="10"></textarea>
+                    </p>
+                    <p>
+                    <input type="submit" name="submit_comment" value="Comment">
+                    </p> {% endcomment %}
+                </form>
+            </div>
 
-        
-
-            <ul>
-                {% for comment in blog.comments.all %}
-                    {% if user.is_authenticated %}
-                        {% if blog.user == user %}
-                            {% if  comment.status == False%}
-                                <br>
+            <br>
+            <div class="approved_comments">
+                <h4 class="luxury_font">Comments</h4>
+                    {% for comment in blog.comments.all %}
+                        {% if user.is_authenticated %}
+                            {% if blog.user == user %}
+                                {% if  comment.status == False%}
                                     {% autoescape off %}
                                         {{comment.content}}
                                     {% endautoescape %} 
-                                    <p>Author: {{comment.author}}</p>
-                                    <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
-                                    <p>State: {{comment.status}}</p>
-                                    {% comment %} Put in buttons here {% endcomment %}
-                                    <a href="{% url 'my_app:comment_approve' pk=comment.pk%}"><button>Approve</button></a>
-                                    <a href="{% url 'my_app:comment_reject' pk=comment.pk%}"><button>Reject</button></a>
-                                    
+                                    <div class="tight_spacing">
+                                        <p>Author: {{comment.author}}</p>
+                                        <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
+                                        {% comment %} <p>State: {{comment.status}}</p> {% endcomment %}
+                                        {% comment %} Put in buttons here {% endcomment %}
+                                        <a class="btn btn-primary" href="{% url 'my_app:comment_approve' pk=comment.pk%}"><i class="bi bi-check"></i></a>
+                                        <a class="btn btn-primary" href="{% url 'my_app:comment_reject' pk=comment.pk%}"><i class="bi bi-x"></i></a>
+                                    </div>
+                                    <br>
+                                        
                                     <!--
                                     <form method="post">
                                         {% csrf_token %}
@@ -76,29 +87,33 @@
                                         <input type="submit" name="$r{{comment.pk}}" value="Reject">
                                     </form>
                                     -->
+                                {% endif %}
                             {% endif %}
                         {% endif %}
-                    {% endif %}
-                {% endfor %}
+                    {% endfor %}
 
-                {% for comment in blog.comments.all %}
-                        {% if  comment.status == True%}
-                            <br>
-                                {% autoescape off %}
-                                    {{comment.content}}
-                                {% endautoescape %} 
-                                <p>Author: {{comment.author}}</p>
-                                <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
-                                <p>State: {{comment.status}}</p>
-                        {% endif %}
-                {% endfor %}
-            </ul>
+                    {% for comment in blog.comments.all %}
+                            {% if  comment.status == True%}
+                                <div class="tight_spacing">
+                                    {% autoescape off %}
+                                        {{comment.content}}
+                                    {% endautoescape %} 
+                                    <p>Author: {{comment.author}}</p>
+                                    <p>Created: {{comment.create_date|date:"M, d, Y, "}}{{comment.create_date|time:"h:i a"}}</p>
+                                    {% comment %} <p>State: {{comment.status}}</p> {% endcomment %}
+                                </div>
+                                <br>
+                            {% endif %}
+                    {% endfor %}
+            </div>
         {% endif %}
 
+    </div>
+</div>
+    
     <script>
         var comment = document.querySelector("#id_content")
         var editor = new MediumEditor(comment);
     </script>
-        
 
 {% endblock body_block %}

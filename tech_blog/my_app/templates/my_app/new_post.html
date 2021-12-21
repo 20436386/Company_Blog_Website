@@ -2,13 +2,19 @@
 
 {% block body_block %}
 
-    <h1>Create a new blog:</h1>
+    {% if create_blog %}
+        <h1>Create New Blog:</h1>
+    {% else %}
+        <h1>Update Blog:</h1>
+    {% endif %}
+    <br>
 
-    <form method="post">
-        {% csrf_token %}
-        {{form.as_p}}    
-        <input type="submit" value="Save">
-    </form>
+    <div style="text-align: center;">
+            {% csrf_token %}
+            {{form.as_p}}    
+            <input type="submit" class="btn btn-primary" value="Save">
+        </form>
+    </div>
 
     <script>
         var textArea = document.querySelector("#id_content")

@@ -1,22 +1,20 @@
 {% extends 'my_app/my_app_base.html' %}
 
 {% block body_block %}
-<h1>All your unpublished blogs:</h1>
+<h1>Unpublished blogs:</h1>
 
 {% for blog in blog_list %}
 
-<ul>
     {% if blog.user == user %}
-        {% comment %} {% if blog.state == False %} {% endcomment %}
-        {% comment %} Line redudant as get_queryset() call overidden in views to include a filter to filter out ojects with false state{% endcomment %}
-        <li>
-                {% comment %} Link should take you to update page {% endcomment %}
-                <p><a href="{% url 'my_app:detail' pk=blog.pk %}">Blog Title: {{blog.title}}</a></p> 
-                <p>Author: {{blog.user}}</p>
-                <p>State: {{blog.state}}</p>
-        </li>
+        <div class="tight_spacing">
+            {% comment %} {% if blog.state == False %} {% endcomment %}
+            {% comment %} Line redudant as get_queryset() call overidden in views to include a filter to filter out ojects with false state{% endcomment %}
+            {% comment %} Link should take you to update page {% endcomment %}
+            <p><a href="{% url 'my_app:detail' pk=blog.pk %}">{{blog.title}}</a></p> 
+            <p>Author: {{blog.user}}</p>
+            {% comment %} <p>State: {{blog.state}}</p> {% endcomment %}
+        </div>
     {% endif %}
-</ul>
 {% endfor %}
 
 {% endblock body_block %}
